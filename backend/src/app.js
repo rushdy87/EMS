@@ -3,6 +3,8 @@ import cors from 'cors';
 import helmet from 'helmet'; // For security headers
 import morgan from 'morgan'; // Morgan is a logging middleware that logs HTTP requests and responses.
 
+import unitRoutes from './routes/unitRoutes.js';
+
 const app = express();
 
 app.use(helmet());
@@ -13,12 +15,7 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-app.get('/', (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    message: 'Employees Management System API is running',
-  });
-});
+app.use('/api/v1/units', unitRoutes);
 
 app.all('/{*any}', (req, res) => {
   res.status(404).json({
