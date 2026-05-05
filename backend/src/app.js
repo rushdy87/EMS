@@ -5,6 +5,8 @@ import morgan from 'morgan'; // Morgan is a logging middleware that logs HTTP re
 
 import unitRoutes from './routes/unitRoutes.js';
 
+import { notFoundMiddleware, errorMiddleware } from './middlewares/index.js';
+
 const app = express();
 
 app.use(helmet());
@@ -15,13 +17,16 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-app.use('/api/v1/units', unitRoutes);
-
-app.all('/{*any}', (req, res) => {
-  res.status(404).json({
-    status: 'fail',
-    message: `Route ${req.originalUrl} not found`,
+app.get('/', (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    message: 'Employees Management System API is running',
   });
 });
+
+app.use('/api/v1/units', unitRoutes);
+
+app.use(notFoundMiddleware);
+app.use(errorMiddleware);
 
 export default app;

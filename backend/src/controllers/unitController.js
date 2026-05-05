@@ -1,90 +1,75 @@
 import * as unitService from '../services/unitService.js';
+import catchAsync from '../utils/catchAsync.js';
+import handleSuccess from '../utils/handleSuccess.js';
+import AppError from '../utils/AppError.js';
 
-export const createUnit = async (req, res, next) => {
-  try {
-    const unit = await unitService.createUnit(req.body);
+export const createUnit = catchAsync(async (req, res, next) => {
+  const unit = await unitService.createUnit(req.body);
+  handleSuccess(res, unit, 'Unit created successfully', 201);
+});
 
-    res.status(201).json({
-      status: 'success',
-      data: unit,
-      message: 'Unit created successfully',
-    });
-  } catch (err) {
-    next(err);
+export const getAllUnits = catchAsync(async (req, res) => {
+  const units = await unitService.getAllUnits();
+
+  handleSuccess(
+    res,
+    {
+      results: units.length,
+      units,
+    },
+    'Units retrieved successfully',
+  );
+});
+
+export const getUnitById = catchAsync(async (req, res, next) => {
+  const unit = await unitService.getUnitById(req.params.id);
+
+  if (!unit) {
+    return next(new AppError('Unit not found', 404));
   }
-};
 
-export const getAllUnits = async (req, res, next) => {
-  try {
-    const units = await unitService.getAllUnits();
+  handleSuccess(res, unit, 'Unit retrieved successfully');
+});
 
-    res.status(200).json({
-      status: 'success',
-      data: units,
-      message: 'Units retrieved successfully',
-    });
-  } catch (err) {
-    next(err);
+export const updateUnit = catchAsync(async (req, res, next) => {
+  const unit = await unitService.updateUnit(req.params.id, req.body);
+
+  if (!unit) {
+    return next(new AppError('Unit not found', 404));
   }
-};
 
-export const getUnitById = async (req, res, next) => {
-  try {
-    const unit = await unitService.getUnitById(req.params.id);
+  handleSuccess(res, unit, 'Unit updated successfully');
+});
 
-    if (!unit) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'Unit not found',
-      });
-    }
+export const deleteUnit = catchAsync(async (req, res, next) => {
+  const unit = await unitService.deleteUnit(req.params.id);
 
-    res.status(200).json({
-      status: 'success',
-      data: unit,
-    });
-  } catch (err) {
-    next(err);
+  if (!unit) {
+    return next(new AppError('Unit not found', 404));
   }
-};
 
-export const updateUnit = async (req, res, next) => {
-  try {
-    const unit = await unitService.updateUnit(req.params.id, req.body);
+  handleSuccess(res, unit, 'Unit deleted successfully');
+});
 
-    if (!unit) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'Unit not found',
-      });
-    }
+export const restoreUnit = catchAsync(async (req, res, next) => {
+  const unit = await unitService.restoreUnit(req.params.id);
 
-    res.status(200).json({
-      status: 'success',
-      data: unit,
-      message: 'Unit updated successfully',
-    });
-  } catch (err) {
-    next(err);
+  if (!unit) {
+    return next(new AppError('Deleted unit not found', 404));
   }
-};
 
-export const deleteUnit = async (req, res, next) => {
-  try {
-    const result = await unitService.deleteUnit(req.params.id);
+  handleSuccess(res, unit, 'Unit restored successfully');
+});
 
-    if (!result) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'Unit not found',
-      });
-    }
+export const getDeletedUnits = catchAsync(async (req, res) => {
+  const units = await unitService.getDeletedUnits();
 
-    res.status(200).json({
-      status: 'success',
-      message: 'Unit deleted successfully',
-    });
-  } catch (err) {
-    next(err);
-  }
-};
+  handleSuccess(
+    res,
+    {
+      results: units.length,
+      units,
+    },
+    'Deleted units retrieved successfully',
+  );
+});
