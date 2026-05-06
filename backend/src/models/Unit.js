@@ -16,7 +16,7 @@ const Unit = sequelize.define(
     description: {
       type: DataTypes.TEXT,
     },
-    isActive: {
+    is_active: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
