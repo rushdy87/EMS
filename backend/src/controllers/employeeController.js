@@ -47,3 +47,26 @@ export const deleteEmployee = catchAsync(async (req, res, next) => {
 
   handleSuccess(res, employee, 'Employee deleted successfully');
 });
+
+export const getDeletedEmployees = catchAsync(async (req, res) => {
+  const employees = await employeeService.getDeletedEmployees();
+
+  handleSuccess(
+    res,
+    {
+      results: employees.length,
+      employees,
+    },
+    'Deleted employees retrieved successfully',
+  );
+});
+
+export const restoreEmployee = catchAsync(async (req, res, next) => {
+  const employee = await employeeService.restoreEmployee(req.params.id);
+
+  if (!employee) {
+    return next(new AppError('Deleted employee not found', 404));
+  }
+
+  handleSuccess(res, employee, 'Employee restored successfully');
+});

@@ -12,6 +12,7 @@ import {
   EMPLOYEE_ALLOWED_SORT_FIELDS,
   buildEmployeeWhere,
 } from '../utils/employeeQueryBuilder.js';
+import { validateEmployeeRelations } from '../utils/employeeValidators.js';
 
 const { Employee, Unit, JobTitle } = db;
 
@@ -32,6 +33,8 @@ const employeeIncludes = [
 ];
 
 export const createEmployee = async (data) => {
+  await validateEmployeeRelations(data);
+
   const payload = {
     ...data,
     search_name_ar: normalizeArabic(data.name_ar),
@@ -93,6 +96,13 @@ export const updateEmployee = async (id, data) => {
 
   if (!employee) return null;
 
+  if (data.unit_id || data.job_title_id) {
+    await validateEmployeeRelations({
+      unit_id: data.unit_id || employee.unit_id,
+      job_title_id: data.job_title_id || employee.job_title_id,
+    });
+  }
+
   const payload = { ...data };
 
   if (data.name_ar) {
@@ -113,6 +123,29 @@ export const deleteEmployee = async (id) => {
   if (!employee) return null;
 
   await employee.update({ is_active: false });
+
+  return employee;
+};
+
+export const getDeletedEmployees = async () => {
+  return Employee.findAll({
+    where: { is_active: false },
+    include: employeeIncludes,
+    order: [['updated_at', 'DESC']],
+  });
+};
+
+export const restoreEmployee = async (id) => {
+  const employee = await Employee.findOne({
+    where: {
+      id,
+      is_active: false,
+    },
+  });
+
+  if (!employee) return null;
+
+  await employee.update({ is_active: true });
 
   return employee;
 };

@@ -10,6 +10,14 @@ router
   .get(employeeController.getAllEmployees)
   .post(employeeController.createEmployee);
 
+router.get('/deleted', employeeController.getDeletedEmployees);
+
+router.patch(
+  '/:id/restore',
+  validateIdParam('id'),
+  employeeController.restoreEmployee,
+);
+
 router
   .route('/:id')
   .all(validateIdParam('id'))
