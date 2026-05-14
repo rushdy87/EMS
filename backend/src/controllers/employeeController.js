@@ -39,13 +39,13 @@ export const updateEmployee = catchAsync(async (req, res, next) => {
 });
 
 export const deleteEmployee = catchAsync(async (req, res, next) => {
-  const employee = await employeeService.deleteEmployee(req.params.id);
+  const result = await employeeService.deleteEmployee(req.params.id);
 
-  if (!employee) {
+  if (!result) {
     return next(new AppError('Employee not found', 404));
   }
 
-  handleSuccess(res, employee, 'Employee deleted successfully');
+  handleSuccess(res, null, 'Employee deleted successfully');
 });
 
 export const getDeletedEmployees = catchAsync(async (req, res) => {

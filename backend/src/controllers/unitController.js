@@ -42,13 +42,13 @@ export const updateUnit = catchAsync(async (req, res, next) => {
 });
 
 export const deleteUnit = catchAsync(async (req, res, next) => {
-  const unit = await unitService.deleteUnit(req.params.id);
+  const result = await unitService.deleteUnit(req.params.id);
 
-  if (!unit) {
+  if (!result) {
     return next(new AppError('Unit not found', 404));
   }
 
-  handleSuccess(res, unit, 'Unit deleted successfully');
+  handleSuccess(res, null, 'Unit deleted successfully');
 });
 
 export const restoreUnit = catchAsync(async (req, res, next) => {

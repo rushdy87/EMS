@@ -46,11 +46,11 @@ export const updateJobTitle = catchAsync(async (req, res, next) => {
 });
 
 export const deleteJobTitle = catchAsync(async (req, res, next) => {
-  const jobTitle = await jobTitleService.deleteJobTitle(req.params.id);
+  const result = await jobTitleService.deleteJobTitle(req.params.id);
 
-  if (!jobTitle) {
+  if (!result) {
     return next(new AppError('Job title not found', 404));
   }
 
-  handleSuccess(res, jobTitle, 'Job title deleted successfully');
+  handleSuccess(res, null, 'Job title deleted successfully');
 });

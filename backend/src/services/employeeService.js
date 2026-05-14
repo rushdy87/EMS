@@ -13,6 +13,11 @@ import {
   buildEmployeeWhere,
 } from '../utils/employeeQueryBuilder.js';
 import { validateEmployeeRelations } from '../utils/employeeValidators.js';
+import {
+  softDeleteById,
+  restoreById,
+  getDeletedRecords,
+} from './baseService.js';
 
 const { Employee, Unit, JobTitle } = db;
 
@@ -113,39 +118,17 @@ export const updateEmployee = async (id, data) => {
 };
 
 export const deleteEmployee = async (id) => {
-  const employee = await Employee.findOne({
-    where: {
-      id,
-      is_active: true,
-    },
-  });
-
-  if (!employee) return null;
-
-  await employee.update({ is_active: false });
-
-  return employee;
+  return softDeleteById(Employee, id);
 };
 
 export const getDeletedEmployees = async () => {
-  return Employee.findAll({
-    where: { is_active: false },
+  return getDeletedRecords(Employee, {
     include: employeeIncludes,
-    order: [['updated_at', 'DESC']],
   });
 };
 
 export const restoreEmployee = async (id) => {
-  const employee = await Employee.findOne({
-    where: {
-      id,
-      is_active: false,
-    },
+  return restoreById(Employee, id, {
+    include: employeeIncludes,
   });
-
-  if (!employee) return null;
-
-  await employee.update({ is_active: true });
-
-  return employee;
 };

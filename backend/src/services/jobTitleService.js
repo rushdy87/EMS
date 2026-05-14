@@ -2,6 +2,8 @@ import db from '../models/index.js';
 
 const { JobTitle } = db;
 
+import { softDeleteById } from './baseService.js';
+
 export const createJobTitle = async (data) => {
   return JobTitle.create(data);
 };
@@ -30,13 +32,5 @@ export const updateJobTitle = async (id, data) => {
 };
 
 export const deleteJobTitle = async (id) => {
-  const jobTitle = await JobTitle.findOne({
-    where: { id, is_active: true },
-  });
-
-  if (!jobTitle) return null;
-
-  await jobTitle.update({ is_active: false });
-
-  return jobTitle;
+  return softDeleteById(JobTitle, id);
 };
