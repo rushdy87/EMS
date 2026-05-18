@@ -6,6 +6,7 @@ import morgan from 'morgan'; // Morgan is a logging middleware that logs HTTP re
 import unitRoutes from './routes/unitRoutes.js';
 import jobTitleRoutes from './routes/jobTitleRoutes.js';
 import employeeRoutes from './routes/employeeRoutes.js';
+import roleRoutes from './routes/roleRoutes.js';
 
 import { notFoundMiddleware, errorMiddleware } from './middlewares/index.js';
 
@@ -29,6 +30,7 @@ app.get('/', (req, res) => {
 app.use('/api/v1/units', unitRoutes);
 app.use('/api/v1/job-titles', jobTitleRoutes);
 app.use('/api/v1/employees', employeeRoutes);
+app.use('/api/v1/roles', roleRoutes);
 app.use(notFoundMiddleware);
 app.use(errorMiddleware);
 
